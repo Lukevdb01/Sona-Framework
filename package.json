@@ -1,0 +1,33 @@
+{
+  "name": "sona-framework",
+  "version": "1.0.0",
+  "description": "A component-driven UI framework, powered by native PHP integration",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node src/index.ts",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lukevdb01/Sona-Framework.git"
+  },
+  "keywords": [
+    "Reactive",
+    "PHP",
+    "Framework",
+    "Javascript"
+  ],
+  "author": "Luke van den Broek",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Lukevdb01/Sona-Framework/issues"
+  },
+  "homepage": "https://github.com/Lukevdb01/Sona-Framework#readme",
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
