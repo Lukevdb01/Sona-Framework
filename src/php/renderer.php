@@ -1,27 +1,27 @@
 <?php
-
 function render($vnode) {
-    if (!is_array($vnode) || !isset($vnode['type'])) {
-        return '';
+    if (!is_array($vnode) || !isset($vnode['type'])) return '';
+
+    if ($vnode['type'] === '__text__') {
+        return htmlspecialchars($vnode['text']);
     }
 
-    $type = $vnode['type'];
-    $props = isset($vnode['props']) && is_array($vnode['props']) ? $vnode['props'] : [];
-    $children = isset($vnode['children']) && is_array($vnode['children']) ? $vnode['children'] : [];
+    $tag = $vnode['type'];
+    $props = $vnode['props'] ?? [];
+    $children = $vnode['children'] ?? [];
 
-    $html = "<$type";
-
+    $attributes = '';
     foreach ($props as $key => $value) {
-        $html .= " $key=\"$value\"";
+        $attributes .= ' ' . htmlspecialchars($key) . '="' . htmlspecialchars($value) . '"';
     }
 
-    $html .= ">";
+    $html = "<$tag$attributes>";
 
     foreach ($children as $child) {
         $html .= render($child);
     }
 
-    $html .= "</$type>";
+    $html .= "</$tag>";
 
     return $html;
 }
