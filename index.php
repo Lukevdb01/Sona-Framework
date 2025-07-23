@@ -9,8 +9,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-session_start();
-
 $_SERVER['DOCUMENT_ROOT'] = dirname(__FILE__) . '/src/php/';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -24,5 +22,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     http_response_code(405);
     echo json_encode(['error' => 'Method not allowed']);
 }
-
-session_write_close();
