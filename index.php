@@ -14,8 +14,8 @@ session_start();
 $_SERVER['DOCUMENT_ROOT'] = dirname(__FILE__) . '/src/php/';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Serve the main HTML page (template.php)
-    require_once __DIR__ . '/src/php/template.php';
+    // Serve the main HTML page (page.html)
+    require_once __DIR__ . '/page.html';
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle POST requests for VDOM updates and patching
     require_once __DIR__ . '/src/php/dom.php';

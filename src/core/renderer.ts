@@ -7,7 +7,6 @@ export function render(vnode: VNode): Node {
 
   const dom = document.createElement(vnode.type);
 
-  // Defensive: ensure props is an object
   const props = vnode.props && typeof vnode.props === 'object' ? vnode.props : {};
   for (let [name, value] of Object.entries(props)) {
     if (name.startsWith("on") && typeof value === "function") {
@@ -18,7 +17,6 @@ export function render(vnode: VNode): Node {
     }
   }
 
-  // Defensive: ensure children is an array
   const children = Array.isArray(vnode.children) ? vnode.children : [];
   children.forEach(child => {
     dom.appendChild(render(child));
@@ -67,7 +65,6 @@ export function updateElement(parent: Node, newVNode: VNode, oldVNode: VNode, in
 function updateProps(dom: any, newProps: Record<string, any>, oldProps: Record<string, any>) {
   if (!dom._listeners) dom._listeners = {};
 
-  // Remove old props
   for (let name in oldProps) {
     if (!(name in newProps)) {
       if (name.startsWith("on")) {
@@ -80,7 +77,6 @@ function updateProps(dom: any, newProps: Record<string, any>, oldProps: Record<s
     }
   }
 
-  // Add or update new props
   for (let name in newProps) {
     if (newProps[name] !== oldProps[name]) {
       if (name.startsWith("on")) {

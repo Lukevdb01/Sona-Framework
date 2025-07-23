@@ -16,10 +16,10 @@
     </form>
     <div id="ssr-output"></div>
   </div>
+  
   <script type="module">
     import { SonaClientApp } from '/ionx/sona-framework/dist/core/sona.js';
 
-    // Helper: build VDOM for the form state
     function buildVDOM(name) {
       return {
         type: 'div',
@@ -31,18 +31,14 @@
       };
     }
 
-    // Mount SonaClientApp to the output div and use dom.php as the patch endpoint
     const app = new SonaClientApp(document.getElementById('ssr-output'), 'dom.php');
 
-    // Initial render
     app.sync(buildVDOM(''));
 
-    // Only update SSR on submit
     document.getElementById('demo-form').addEventListener('submit', e => {
       e.preventDefault();
       const nameValue = document.getElementById('name').value;
       app.sync(buildVDOM(nameValue)).then(() => {
-        // Restore input value after SSR DOM update
         document.getElementById('name').value = nameValue;
       });
     });

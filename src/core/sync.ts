@@ -8,7 +8,6 @@ class SyncronizationLayer {
     constructor(private mountPoint: HTMLElement) { }
 
     public async syncVDOM(newVDOM: VNode): Promise<void> {
-        // Always use SSR: send VDOM to backend and update DOM with response
         await this.fetchServerVDOM(newVDOM);
     }
 
@@ -26,7 +25,6 @@ class SyncronizationLayer {
     }
 
     async fetchServerVDOM(newVDOM: VNode): Promise<void> {
-        // Send VNode to backend for rendering (wrap in { vdom: ... })
         const response = await fetch(window.location.href, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
