@@ -4,30 +4,23 @@ import { diff } from './diff.js';
 
 class SonaClientApp {
     private syncLayer: SyncronizationLayer;
-    private clientVDOM: VNode | null = null;
-    private serverVDOM: VNode | null = null;
-    private patchEndpoint: string;
 
     constructor(private mountPoint: HTMLElement, patchEndpoint: string) {
         this.syncLayer = new SyncronizationLayer(mountPoint);
-        this.patchEndpoint = patchEndpoint;
     }
 
     // Render new VDOM to DOM and update clientVDOM
     public async render(newVDOM: VNode): Promise<void> {
-        this.clientVDOM = newVDOM;
         await this.syncLayer.syncVDOM(newVDOM);
     }
 
     // Main sync: send clientVDOM diff to server, receive patch, apply to clientVDOM and DOM
     public async sync(newVDOM: VNode): Promise<void> {
         // 1. Compute client-side patch and apply to DOM
-        const patches = diff(this.clientVDOM, newVDOM);
+        const patches = diff(newVDOM);
         for (const patchFn of patches) {
             await patchFn(this.mountPoint);
         }
-        // 2. Update clientVDOM
-        this.clientVDOM = newVDOM;
 
         // 3. Send patch (or newVDOM for now) to server and receive server patch
         // (In a real implementation, send only the diff/patch, not the full VDOM)
@@ -66,17 +59,22 @@ class SonaClientApp {
             const serverPatch = patch.patch;
             // Als er een vdom is, altijd behandelen als volledige vervanging
             if (serverPatch.vdom) {
-                this.clientVDOM = serverPatch.vdom;
-                const patches = diff(null, serverPatch.vdom);
+                const patches = diff(serverPatch.vdom);
                 for (const patchFn of patches) {
                     patchFn(this.mountPoint);
                 }
             } else if (serverPatch.op === 'update') {
-                // Voorbeeld: als je een granular patch hebt, zou je die hier toepassen
-                // Voor nu: geen granular patching geïmplementeerd
+                // Specifieke update patch verwerking
+                const patches = diff(serverPatch.vdom);
+                for (const patchFn of patches) {
+                    patchFn(this.mountPoint);
+                }
             }
         } else if (patch && patch.vdom) {
-            this.clientVDOM = patch.vdom;
+            const patches = diff(patch.vdom);
+            for (const patchFn of patches) {
+                patchFn(this.mountPoint);
+            }
         }
     }
 }

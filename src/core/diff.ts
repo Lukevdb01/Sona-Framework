@@ -3,7 +3,7 @@ import type { VNode } from './models/vnode.js';
 import { Patch } from './patch.js';
 import { render } from './renderer.js';
 
-export function diff(currentVDOM: VNode | null, newVDOM: VNode): Patch[] {
+export function diff(newVDOM: VNode): Patch[] {
     return [
         async (root: HTMLElement) => {
             if (!root || !(root instanceof HTMLElement)) {

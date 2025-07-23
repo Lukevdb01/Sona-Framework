@@ -1,12 +1,7 @@
 import { VNode } from "./models/vnode.js";
 import type { Patch } from "./patch.js";
-import { diff } from "./diff.js";
 import { render } from "./renderer.js";
 
-/**
- * SyncronizationLayer class
- * This class is responsible for managing the synchronization of VDOM changes to the Server VDOM.
- */
 class SyncronizationLayer {
     private currentVDOM: VNode | null = null;
 
