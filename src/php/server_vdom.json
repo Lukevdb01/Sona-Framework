@@ -1,1 +1,0 @@
-{"type":"div","props":{"class":"ssr-content"},"children":[{"type":"h2","props":[],"children":["Hallo, testb!"]},{"type":"p","props":[],"children":["Dit is server-side rendered in realtime."]}]}

@@ -1,3 +1,4 @@
+
 <?php
 $_SERVER['DOCUMENT_ROOT'] = dirname(__FILE__) . '/../';
 require_once 'vnode.php';
@@ -5,19 +6,20 @@ require_once 'renderer.php';
 
 header('Content-Type: application/json');
 
-// File to persist server VDOM state
-$serverVDOMFile = __DIR__ . '/server_vdom.json';
-
-// Helper: load server VDOM from file
-function loadServerVDOM($file) {
-    if (!file_exists($file)) return null;
-    $json = file_get_contents($file);
-    return json_decode($json, true);
+// Start session for per-user VDOM storage
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-// Helper: save server VDOM to file
-function saveServerVDOM($file, $vdom) {
-    file_put_contents($file, json_encode($vdom));
+
+// Helper: load server VDOM from session
+function loadServerVDOM() {
+    return isset($_SESSION['server_vdom']) ? $_SESSION['server_vdom'] : null;
+}
+
+// Helper: save server VDOM to session
+function saveServerVDOM($vdom) {
+    $_SESSION['server_vdom'] = $vdom;
 }
 
 // Helper: compute a simple patch (replace if different)
@@ -27,18 +29,20 @@ function computePatch($oldVDOM, $newVDOM) {
     return [ 'op' => 'replace', 'vdom' => $newVDOM ];
 }
 
+
 $data = json_decode(file_get_contents('php://input'), true);
-file_put_contents('debug.log', print_r($data, true));
 
 if (isset($data['vdom'])) {
     $clientVDOM = $data['vdom'];
-    $serverVDOM = loadServerVDOM($serverVDOMFile);
+
+    $serverVDOM = loadServerVDOM();
 
     // Compute patch from serverVDOM to clientVDOM
     $patch = computePatch($serverVDOM, $clientVDOM);
 
     // Update serverVDOM to match clientVDOM
-    saveServerVDOM($serverVDOMFile, $clientVDOM);
+
+    saveServerVDOM($clientVDOM);
 
     // Always send op='replace' for now, so client always handles as full replace
     if ($patch) {
