@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Virtual DOM PHP Renderer</title>
+  <script src="dist/core/renderer.js"></script>
+  <script src="dist/core/vnode.js"></script>
 </head>
+
 <body>
   <div id="output"></div>
 
   <script>
-    fetch('http://localhost/sona-framework/src/php/bridge.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    })
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById('output').innerHTML = html;
-    })
-    .catch(err => {
-      console.error('Error:', err);
-      document.getElementById('output').innerText = 'Failed to load content.';
-    });
+    fetch('http://localhost/sona-framework/src/php/bridge.php')
+      .then(res => res.json())
+      .then(data => {
+        const vdom = data.vdom;
+        updateElement(document.getElementById('output'), vdom, null);
+      });
   </script>
 </body>
+
 </html>
