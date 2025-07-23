@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Virtual DOM Example</title>
+    <script src="dist/core/vnode.js"></script>
+    <script src="dist/core/renderer.js"></script>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script>
+        const root = document.getElementById("root");
+        let oldVNode = null;
+
+        const state = { count: 0 };
+
+        function Counter() {
+            return h("button", {
+                onClick: () => {
+                    state.count++;
+                    renderApp();
+                }
+            }, `Count: ${state.count}`);
+        }
+
+        function renderApp() {
+            const newVNode = Counter();
+            updateElement(root, newVNode, oldVNode);
+            oldVNode = newVNode;
+        }
+        renderApp();
+    </script>
+</body>
+</html>
