@@ -1,5 +1,9 @@
 <?php
 function render($vnode) {
+    // If it's a string, render as text
+    if (is_string($vnode)) {
+        return htmlspecialchars($vnode);
+    }
     if (!is_array($vnode) || !isset($vnode['type'])) return '';
 
     if ($vnode['type'] === '__text__') {

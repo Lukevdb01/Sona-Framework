@@ -1,11 +1,15 @@
-function render(vnode) {
+import type { VNode } from './models/vnode.js';
+
+export function render(vnode: VNode): Node {
   if (vnode.type === "TEXT_ELEMENT") {
-    return document.createTextNode(vnode.props.nodeValue);
+    return document.createTextNode(vnode.props?.nodeValue ?? "");
   }
 
   const dom = document.createElement(vnode.type);
 
-  for (let [name, value] of Object.entries(vnode.props)) {
+  // Defensive: ensure props is an object
+  const props = vnode.props && typeof vnode.props === 'object' ? vnode.props : {};
+  for (let [name, value] of Object.entries(props)) {
     if (name.startsWith("on") && typeof value === "function") {
       const event = name.toLowerCase().substring(2);
       dom.addEventListener(event, value);
@@ -14,14 +18,16 @@ function render(vnode) {
     }
   }
 
-  vnode.children.forEach(child => {
+  // Defensive: ensure children is an array
+  const children = Array.isArray(vnode.children) ? vnode.children : [];
+  children.forEach(child => {
     dom.appendChild(render(child));
   });
 
   return dom;
 }
 
-function updateElement(parent, newVNode, oldVNode, index = 0) {
+export function updateElement(parent: Node, newVNode: VNode, oldVNode: VNode, index: number = 0): void {
     const existingDom = parent.childNodes[index];
 
     if (!oldVNode) {
@@ -58,7 +64,7 @@ function updateElement(parent, newVNode, oldVNode, index = 0) {
     }
 }
 
-function updateProps(dom, newProps, oldProps) {
+function updateProps(dom: any, newProps: Record<string, any>, oldProps: Record<string, any>) {
   if (!dom._listeners) dom._listeners = {};
 
   // Remove old props

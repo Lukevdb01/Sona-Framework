@@ -17,8 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Serve the main HTML page (template.php)
     require_once __DIR__ . '/src/php/template.php';
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Handle POST requests for VDOM updates
+    // Handle POST requests for VDOM updates and patching
     require_once __DIR__ . '/src/php/dom.php';
+    exit();
 } else {
     http_response_code(405);
     echo json_encode(['error' => 'Method not allowed']);

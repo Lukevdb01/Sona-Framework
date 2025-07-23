@@ -1,55 +1,51 @@
 <!DOCTYPE html>
 <html lang="nl">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Virtual DOM PHP Renderer</title>
+  <title>SSR VDOM Demo</title>
   <link rel="icon" href="/favicon.ico" />
-  <script src="dist/core/renderer.js" type="module"></script>
-  <script src="dist/core/vnode.js" type="module"></script>
 </head>
-
 <body>
-  <div id="output"><div>
-
+  <div>
+    <h1>Realtime SSR VDOM Demo</h1>
+    <form id="demo-form">
+      <label for="name">Naam:</label>
+      <input type="text" id="name" name="name" value="" autocomplete="off" />
+      <button type="submit">Verstuur</button>
+    </form>
+    <div id="ssr-output"></div>
+  </div>
   <script type="module">
-    const vnode = {
-      type: "div",
-      props: { class: "box" },
-      children: [
-        {
-          type: "h1",
-          props: { style: "color: #007bff;" },
-          children: ["Server-Side Rendered Titel"]
-        },
-        {
-          type: "p",
-          props: {},
-          children: ["Deze inhoud is gegenereerd via de PHP Virtual DOM renderer."]
-        }
-      ]
-    };
+    import { SonaClientApp } from '/ionx/sona-framework/dist/core/sona.js';
 
-    fetch(window.location.href, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(vnode)
-    })
-    .then(res => res.json())
-    .then(json => {
-      if (json.html) {
-        document.getElementById("output").innerHTML = json.html;
-      } else {
-        document.getElementById("output").innerText = "Fout bij server-rendering.";
-        console.error(json);
-      }
-    })
-    .catch(err => {
-      document.getElementById("output").innerText = "Netwerkfout.";
-      console.error(err);
+    // Helper: build VDOM for the form state
+    function buildVDOM(name) {
+      return {
+        type: 'div',
+        props: { class: 'ssr-content' },
+        children: [
+          { type: 'h2', props: {}, children: [ name ? `Hallo, ${name}!` : 'Voer je naam in.' ] },
+          { type: 'p', props: {}, children: [ 'Dit is server-side rendered in realtime.' ] }
+        ]
+      };
+    }
+
+    // Mount SonaClientApp to the output div and use dom.php as the patch endpoint
+    const app = new SonaClientApp(document.getElementById('ssr-output'), 'dom.php');
+
+    // Initial render
+    app.sync(buildVDOM(''));
+
+    // Only update SSR on submit
+    document.getElementById('demo-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const nameValue = document.getElementById('name').value;
+      app.sync(buildVDOM(nameValue)).then(() => {
+        // Restore input value after SSR DOM update
+        document.getElementById('name').value = nameValue;
+      });
     });
   </script>
 </body>
-
 </html>

@@ -1,0 +1,1 @@
+export type Patch = (root: HTMLElement) => Promise<void>;

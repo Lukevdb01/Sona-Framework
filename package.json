@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A component-driven UI framework, powered by native PHP integration",
   "main": "index.ts",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "ts-node src/index.ts",
